@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="mx-auto">
+    <div id="errorMessage" class="alert alert-danger" role="alert" style="display:none;"></div>
+    <form class="form-inline col-md-8 mx-auto">
+        <select class="search-box col-12" name="states[]" multiple="multiple">
+        </select>
+    </form>
+    <div id="imageContainer" class="row">
+
+    </div>
+
+</div>
+
+
+
+
+<div id="addImage" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload new image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Add comma separated tags to your image</label>
+                        <input id="imageTags" type="text" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlFile1">Choose an images</label>
+                        <input id="uploadImage" type="file" class="btn btn-light form-control-file" required accept=".jpeg, .jpg, .png">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                        <button type="button" class="closeUpload btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="openCart" class="modal " tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Your file cart</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="imageList row"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="generateZip" type="button" class="btn btn-secondary ">Generate zip <i class="fa fa-cloud-download" aria-hidden="true"></i></button>
+                <a style="display:none;" id="downloadAll" class="btn btn-info" download>Download All <i class="fa fa-cloud-download" aria-hidden="true"></i></a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
