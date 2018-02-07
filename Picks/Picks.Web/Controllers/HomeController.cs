@@ -12,6 +12,10 @@ using Picks.Dal.Services;
 using System.IO.Compression;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Picks.Web.Constants;
+using System.Globalization;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Picks.Web.Controllers
 {
@@ -19,18 +23,49 @@ namespace Picks.Web.Controllers
     {
 
         private readonly ApplicationDbContext _ctx;
-        private ImageService _imageService;
+        private readonly ImageService _imageService;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
+        private readonly IDistributedCache _cache;
+        private string CdnUrl = "";
 
-        public HomeController(ApplicationDbContext ctx, ImageService imageService, IHostingEnvironment hostingEnvironment)
+        public HomeController(ApplicationDbContext ctx, ImageService imageService, IHostingEnvironment hostingEnvironment, IConfiguration configuration, IDistributedCache cache)
         {
             _ctx = ctx;
             _imageService = imageService;
             _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
+            _cache = cache;
+
+            if (Convert.ToBoolean(_configuration["CDN:Active"]))
+            {
+                CdnUrl = _configuration["CDN:Url"];
+            }
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string name)
         {
+            ViewBag.CDN = CdnUrl;
+
+            //var value = _cache.GetString("the_cache_key");
+
+            //if (value == null)
+            //{
+            //    value = $"{DateTime.Now.ToString(CultureInfo.CurrentCulture)}";
+            //    _cache.SetString("the_cache_string", value);
+            //}
+
+            //ViewData["CacheTime"] = $"Cached time {value}";
+            //ViewData["CurrentTime"] = $"Current time: {DateTime.Now.ToString(CultureInfo.CurrentCulture)}";
+
+            //var theNameFromSession = HttpContext.Session.Get("name");
+            //if (string.IsNullOrEmpty(theNameFromSession))
+            //{
+                //HttpContext.Session.SetString("name", name);
+            //}
+
+            //ViewData["SessionMessage"] = $"theNameFromSession: {theNameFromSession}";
+
             return View();
         }
 
@@ -59,7 +94,7 @@ namespace Picks.Web.Controllers
                     imageList.AddRange(_ctx.Image.Where(x => x.Tags.Contains(item)).ToList());
                 }
                 imageList = imageList.Distinct().OrderByDescending(x => x.Id).ToList();
-                
+
             }
             else
             {
@@ -78,7 +113,7 @@ namespace Picks.Web.Controllers
             foreach (var item in getTags)
             {
                 tagList.AddRange(item.ToLower().Split(","));
-            }  
+            }
 
             for (int i = 0; i < tagList.Count(); i++)
             {

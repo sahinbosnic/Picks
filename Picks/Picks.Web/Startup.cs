@@ -11,6 +11,7 @@ using Picks.Dal.DataAccess;
 using Picks.Dal.Services;
 using Newtonsoft.Json.Serialization;
 using Picks.Dal.Configuration;
+using Microsoft.AspNetCore.Routing;
 
 namespace Picks.Web
 {
@@ -29,6 +30,7 @@ namespace Picks.Web
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc();
+            services.AddSingleton<IConfiguration>(Configuration);
 
             services.Configure<ImageUploadConfiguration>(Configuration.GetSection("ImageUpload"));
 
@@ -38,10 +40,21 @@ namespace Picks.Web
                 .AddMvc()
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
+            services.AddDistributedRedisCache(opt =>
+            {
+                opt.Configuration = Configuration.GetConnectionString("Redis");
+                opt.InstanceName = "main_";
+            });
+
+            services.AddSession(opt =>
+            {
+                opt.Cookie.Name = "picks.io";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IConfiguration _configuration)
         {
             if (env.IsDevelopment())
             {
@@ -53,6 +66,10 @@ namespace Picks.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseSession();
+
+            //RouteCollection.RouteExistingFiles = true;
+
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
@@ -60,6 +77,13 @@ namespace Picks.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                //if(Convert.ToBoolean(_configuration["CDN:Active"]))
+                //{
+                //    routes.MapRoute(
+                //    name: "files",
+                //    template: "css/{file}");
+                //}
             });
         }
     }

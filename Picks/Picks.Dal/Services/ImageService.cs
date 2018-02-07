@@ -97,7 +97,7 @@ namespace Picks.Dal.Services
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                // TODO: LOGGING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                
             }
 
         }
