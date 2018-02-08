@@ -117,8 +117,9 @@ function GetAllImages(searchArr)
                 $("#imageContainer").append(rend)
             })
 
-            //$('.search-box').empty()
-            $("#uploadForm").trigger("reset");
+            $('.search-box').trigger("reset")
+            $("#uploadForm").trigger("reset")
+
             GetAllTags()
         },
     })
