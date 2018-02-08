@@ -1,8 +1,7 @@
 ﻿$(document).ready(function () {
 
-    GetAllTags()
     GetAllImages()
-
+    GetAllTags()
     $('.search-box').select2()
 })
 
@@ -47,6 +46,7 @@ $("#addImage form").submit(function (e) {
             success: function (result) {
                 $(".closeUpload").click()
                 GetAllImages()
+                GetAllTags()
             },
             error: function (err) {
                 $("#errorMessage").text("Something went wrong with the upload, make sure you upload images only!")
@@ -81,6 +81,7 @@ function GetAllTags() {
         type: 'GET',
         url: '/home/gettags',
         success: function (result) {
+            $('.search-box').empty()
             $.each(result, function (i, tag) {
                 //console.log(i, tag)
                 $('.search-box').append(new Option(tag, tag))
@@ -120,7 +121,7 @@ function GetAllImages(searchArr)
             $('.search-box').trigger("reset")
             $("#uploadForm").trigger("reset")
 
-            GetAllTags()
+            
         },
     })
 }
