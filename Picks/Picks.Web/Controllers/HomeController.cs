@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Picks.Web.Constants;
 using System.Globalization;
 using Microsoft.Extensions.Caching.Distributed;
+using Picks.Web.Extensions;
 
 namespace Picks.Web.Controllers
 {
@@ -43,28 +44,34 @@ namespace Picks.Web.Controllers
             }
         }
 
-        public IActionResult Index(string name)
+        public IActionResult GetCdnUrl()
         {
+            return Json(CdnUrl);
+        }
+
+        public IActionResult Index()
+        {
+            string name = "WORKS";
             ViewBag.CDN = CdnUrl;
 
-            //var value = _cache.GetString("the_cache_key");
+            var value = _cache.GetValue<string>("the_cache_key");
 
-            //if (value == null)
-            //{
-            //    value = $"{DateTime.Now.ToString(CultureInfo.CurrentCulture)}";
-            //    _cache.SetString("the_cache_string", value);
-            //}
+            if (value == null)
+            {
+                value = $"{DateTime.Now.ToString(CultureInfo.CurrentCulture)}";
+                _cache.SetString("the_cache_string", value);
+            }
 
-            //ViewData["CacheTime"] = $"Cached time {value}";
-            //ViewData["CurrentTime"] = $"Current time: {DateTime.Now.ToString(CultureInfo.CurrentCulture)}";
+            ViewData["CacheTime"] = $"Cached time {value}";
+            ViewData["CurrentTime"] = $"Current time: {DateTime.Now.ToString(CultureInfo.CurrentCulture)}";
 
-            //var theNameFromSession = HttpContext.Session.Get("name");
-            //if (string.IsNullOrEmpty(theNameFromSession))
-            //{
-                //HttpContext.Session.SetString("name", name);
-            //}
+            var theNameFromSession = HttpContext.Session.Get<string>("name");
+            if (string.IsNullOrEmpty(theNameFromSession))
+            {
+                HttpContext.Session.Set("name", name);
+            }
 
-            //ViewData["SessionMessage"] = $"theNameFromSession: {theNameFromSession}";
+            ViewData["SessionMessage"] = $"theNameFromSession: {theNameFromSession}";
 
             return View();
         }

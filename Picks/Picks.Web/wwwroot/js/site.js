@@ -1,7 +1,23 @@
-﻿$(document).ready(function () {
+﻿var cdnUrl = ""; 
+$(document).ready(function () {
 
-    GetAllImages()
-    GetAllTags()
+    $.ajax({
+        type: 'GET',
+        url: '/home/GetCdnUrl',
+        success: function (result) {
+            if (result.length > 0)
+            {
+                cdnUrl = result
+            }
+            
+            
+        }
+    }).then(function () {
+        GetAllImages()
+        GetAllTags()
+    })
+    //GetAllImages()
+    //GetAllTags()
     $('.search-box').select2()
 })
 
@@ -18,6 +34,7 @@ $(document).on("click", ".addToBasket", function () {
             '</span>'
         ].join("")
     )
+
 })
 
 $(document).on("click", ".removeCartItem", function () {
@@ -68,7 +85,6 @@ $("#generateZip").click(function () {
         url: '/home/getZipUrl',
         data: { images: imageList },
         success: function (result) {
-            console.log(result)
             $("#downloadAll").attr("href", '/zip/'+result)
             $("#downloadAll").show()
 
@@ -104,9 +120,10 @@ function GetAllImages(searchArr)
         data: { search: searchArr },
         success: function (result) {
             $.each(result, function (i, file) {
+                console.log("cdnUrl", cdnUrl)
                 var rend = [
                     '<div class="image-box col-md-3 mt-4">',
-                    '<img src="/uploads/' + file.FileName + '">',
+                    '<img src="' + cdnUrl +'/uploads/' + file.FileName + '">',
                     '<div>',
                     '<span class="btn btn-success addToBasket"> <i class="fa fa-shopping-basket" aria-hidden="true"></i></span>',
                     '<a href="/uploads/' + file.FileName + '" class="btn btn-info" download><i class="fa fa-cloud-download" aria-hidden="true"></i></a>',
